@@ -1,4 +1,223 @@
 import matplotlib.pyplot as plt
+import numpy as np
+from decimal import Decimal
+
+def neat_statespace(matrixA, matrixB, inp, outp, outp_dot, n_digits):
+    outp = np.asarray(outp)
+    inp = np.asarray(inp)
+    
+    if isinstance(outp_dot, basestring) == False:
+        outp_dot = np.asarray(outp_dot)
+        string = '\\begin{bmatrix}'
+        for i in outp_dot:
+            string += i[0]+r'\\'
+        string += '\\end{bmatrix}'
+
+    else:
+        string = outp_dot
+    
+    string += ' = '
+    
+    matrixA = np.asarray(matrixA)
+    
+    columns = np.size(matrixA,1)
+    rows = np.size(matrixA,0)
+    
+    string += '\\begin{bmatrix}'
+    
+    for i in range(0,rows):
+        for j in range(0,columns):
+
+            number = matrixA[i][j]
+
+            if number == 0.0:
+                string += ' 0 '
+                
+            elif number == 1.0:
+                string += ' 1 '
+                
+            else: 
+                formatted = "{:."+str(n_digits)+"e}"
+                number_formatted = formatted.format(Decimal(number))
+                number_split = number_formatted.split('e')
+                
+                string += ' '+number_split[0]+'\\text{e'+number_split[1]+'} '
+                
+            if j != (columns - 1):
+                string += "&"
+                
+        string += "\\\\"
+    
+    
+    
+    string += '\\end{bmatrix}'
+
+    string += '\\begin{bmatrix}'
+    for i in outp:
+        string += i[0]+r'\\'
+    string += '\\end{bmatrix}'
+    
+    string += ' + '
+    
+    matrixB = np.asarray(matrixB)
+    
+    columns = np.size(matrixB,1)
+    rows = np.size(matrixB,0)    
+    
+    
+    
+    string += '\\begin{bmatrix}'
+    
+    for i in range(0,rows):
+        for j in range(0,columns):
+
+            number = matrixB[i][j]
+
+            if number == 0.0:
+                string += ' 0 '
+                
+            elif number == 1.0:
+                string += ' 1 '
+                
+            else: 
+                formatted = "{:."+str(n_digits)+"e}"
+                number_formatted = formatted.format(Decimal(number))
+                number_split = number_formatted.split('e')
+                
+                string += ' '+number_split[0]+'\\text{e'+number_split[1]+'} '
+                
+            if j != (columns - 1):
+                string += "&"
+                
+        string += "\\\\"
+    
+    string += '\\end{bmatrix}'
+    
+    string += '\\begin{bmatrix}'
+    for i in inp:
+        string += i[0]+r'\\'
+    string += '\\end{bmatrix}'
+
+    return string
+
+def neat_statespace_compare(matrixA, matrixB, matrixAold, matrixBold, inp, outp, outp_dot, n_digits):
+    outp = np.asarray(outp)
+    inp = np.asarray(inp)
+    
+    if isinstance(outp_dot, basestring) == False:
+        outp_dot = np.asarray(outp_dot)
+        string = '\\begin{bmatrix}'
+        for i in outp_dot:
+            string += i[0]+r'\\'
+        string += '\\end{bmatrix}'
+
+    else:
+        string = outp_dot
+    
+    string += ' = '
+    
+    matrixA = np.asarray(matrixA)
+    matrixAold = np.asarray(matrixAold)
+    
+    columns = np.size(matrixA,1)
+    rows = np.size(matrixA,0)
+    
+    string += '\\begin{bmatrix}'
+    
+    for i in range(0,rows):
+        for j in range(0,columns):
+
+            number = matrixA[i][j]
+
+            if number == 0.0:
+                if number != matrixAold[i][j]:
+                    string += ' \\textbf{0} '
+                else:
+                    string += ' 0 '
+                    
+            elif number == 1.0:
+                if number != matrixAold[i][j]:
+                    string += ' \\textbf{1} '
+                else:
+                    string += ' 1 '
+                
+            else: 
+                formatted = "{:."+str(n_digits)+"e}"
+                number_formatted = formatted.format(Decimal(number))
+                number_split = number_formatted.split('e')
+                
+                if number == matrixAold[i][j]:
+                    string += ' '+number_split[0]+'\\text{e'+number_split[1]+'} '
+                else:
+                    string += ' \\textbf{'+number_split[0]+'e'+number_split[1]+'} '
+                
+            if j != (columns - 1):
+                string += "&"
+                
+        string += "\\\\"
+    
+    
+    
+    string += '\\end{bmatrix}'
+
+    string += '\\begin{bmatrix}'
+    for i in outp:
+        string += i[0]+r'\\'
+    string += '\\end{bmatrix}'
+    
+    string += ' + '
+    
+    matrixB = np.asarray(matrixB)
+    matrixBold = np.asarray(matrixBold)
+    
+    columns = np.size(matrixB,1)
+    rows = np.size(matrixB,0)    
+    
+    
+    
+    string += '\\begin{bmatrix}'
+    
+    for i in range(0,rows):
+        for j in range(0,columns):
+
+            number = matrixB[i][j]
+
+            if number == 0.0:
+                if number != matrixBold[i][j]:
+                    string += ' \\textbf{0} '
+                else:
+                    string += ' 0 '
+                    
+            elif number == 1.0:
+                if number != matrixBold[i][j]:
+                    string += ' \\textbf{1} '
+                else:
+                    string += ' 1 '
+                
+            else: 
+                formatted = "{:."+str(n_digits)+"e}"
+                number_formatted = formatted.format(Decimal(number))
+                number_split = number_formatted.split('e')
+                
+                if number != matrixBold[i][j]:
+                    string += ' \\textbf{'+number_split[0]+'e'+number_split[1]+'} '
+                else:
+                    string += ' '+number_split[0]+'\\text{e'+number_split[1]+'} '
+                
+            if j != (columns - 1):
+                string += "&"
+                
+        string += "\\\\"
+    
+    string += '\\end{bmatrix}'
+    
+    string += '\\begin{bmatrix}'
+    for i in inp:
+        string += i[0]+r'\\'
+    string += '\\end{bmatrix}'
+
+    return string
+
 
 def create_time_domain_figures(T, t, damped_data, undamped_data, fig_width, fig_height, line_width, label_fontsize, subplot_vspace):
     
